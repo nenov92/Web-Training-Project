@@ -1,0 +1,259 @@
+.display-inline {
+	display: inline;
+}
+
+.hideElement {
+	display: none;
+}
+
+/* loading indicator while ajax call is executed */
+.loadingIndicator {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background: rgba(255, 255, 255, .8)
+		url('http://localhost:8080/MyWebProjectStaticContent/images/ajax-loader.gif')
+		50% 50% no-repeat;
+}
+
+body.loading {
+	overflow: hidden;
+}
+
+body.loading .loadingIndicator {
+	display: block;
+}
+
+/* style used to display dimensions div */
+.grid-dimension {
+	margin-left: auto;
+	margin-right: auto;
+	width: 198px;
+}
+
+.grid-dimension>p {
+	text-align: right;
+}
+
+.grid-dimension-input {
+	margin: 0px 5px;
+}
+
+/* style used to display main grid */
+.divTable {
+	display: table;
+	width: auto;
+	background-color: #eee;
+	border: 1px solid #666666;
+	border-spacing: 5px;
+	margin: auto;
+	border-radius: 3px;
+}
+
+.divTable div {
+	position: relative;
+}
+
+.divRow {
+	display: table-row;
+	width: auto;
+}
+
+.divCell {
+	float: left;
+	display: table-column;
+	width: 330px;
+	height: 240px;
+	background-color: #ccc;
+	border: 1px solid #666666;
+	margin: 5px;
+	border-radius: 3px;
+}
+
+.divCell>.cellInner {
+	width: 298px;
+	height: 210px;
+	margin: 0px 15px;
+	background-color: #ccc;
+	z-index: 999;
+}
+
+.cellInner>.cellContent {
+	width: 170px;
+	float: left;
+	padding: 15px;
+	color: #FFF;
+}
+
+.cellInner>.cellNavigation {
+	width: 100px;
+	float: right;
+	text-align: center;
+	padding: 8px 0px 8px 0px;
+}
+
+.cellContent>img {
+	width: 120px;
+	height: 120px;
+}
+
+.cellContent>label {
+	font-size: large;
+}
+
+.submit-button {
+	height: 40px;
+	width: 91px;
+	margin: 4px;
+	font-size: small;
+}
+
+.navigation-button {
+	position: relative;
+	padding: 0px;
+}
+
+.north {
+	height: 15px;
+	width: 50px;
+	margin: 0px 140px;
+}
+
+.east {
+	height: 50px;
+	width: 15px;
+	float: right;
+	margin-top: 75px;
+}
+
+.south {
+	height: 15px;
+	width: 50px;
+	font-size: small;
+	margin-left: 140px;
+	padding: 0px;
+	position: relative;
+	top: -9px;
+	z-index: 999;
+}
+
+.west {
+	height: 50px;
+	width: 15px;
+	float: left;
+	margin-top: 75px;
+}
+
+/* style used to display forms  */
+.container-header {
+	text-align: center;
+}
+
+.container {
+	display: table;
+	border-spacing: 3px 5px;
+	margin: 0px auto;
+	width: auto !important;
+}
+
+.table-row {
+	display: table-row;
+	text-align: left;
+}
+
+.col-left {
+	display: table-cell;
+}
+
+.col-right {
+	display: table-cell;
+}
+
+.col-right input[type=date] {
+	width: 174px;
+	height: 26px;
+}
+
+.col-right>#image {
+	height: 60px;
+	width: 60px;
+	vertical-align: bottom;
+	margin-bottom: 5px;
+}
+
+.col-right>select {
+	height: 26px;
+	width: 174px;
+}
+
+.col-right input:read-only {
+	background-color: #ececec;
+	border: 1px solid #a9a9a9;
+	height: 26px;
+	width: 174px;
+}
+
+select:disabled {
+	background-color: #ececec;
+}
+
+/* style for navigation bar  */
+.nav ul {
+	list-style: none;
+	background-color: #ccc;
+	text-align: center;
+	padding: 0;
+	margin: 0px 100px;
+}
+
+.nav li {
+	font-size: 16px;
+	line-height: 40px;
+	height: 40px;
+	border-bottom: 1px solid #888;
+}
+
+.nav li:hover {
+	background-color: #fff;
+}
+
+.nav a {
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #fff;
+	display: block;
+	transition: .3s background-color;
+	-webkit-transition: .3s background-color;
+}
+
+.nav a:hover {
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #ccc;
+}
+
+@media screen and (min-width: 340px) {
+	.nav li {
+		width: 120px;
+		border-bottom: none;
+		height: 50px;
+		line-height: 50px;
+		font-size: 20px;
+		font-weight: bold;
+	}
+	.nav li {
+		float: left;
+	}
+	.nav ul {
+		overflow: auto;
+		width: 340px;
+		margin: 0 auto;
+		padding: 0px 50px;
+		border-bottom-left-radius: 5px;
+		border-bottom-right-radius: 5px;
+	}
+}
