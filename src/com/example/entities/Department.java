@@ -1,5 +1,6 @@
 package com.example.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,8 @@ import com.example.utils.Constants;
 
 @Entity
 @Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "company_id" }), @UniqueConstraint(columnNames = "rating") })
-public class Department {
+public class Department implements Serializable{
+	private static final long serialVersionUID = 8941653417514913803L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

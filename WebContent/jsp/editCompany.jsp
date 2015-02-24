@@ -1,12 +1,13 @@
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.example.entities.Employee"%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+
 <jsp:useBean id="comapnySelectedForEdit" class="com.example.entities.Company" scope="request" />
 
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<meta charset="UTF-8">
 		<title>Edit Company</title>
 		
 		<link rel="stylesheet" type="text/css" href="css/app.css">
@@ -18,7 +19,6 @@
 	</head>
 	<body>
 		<%@include file="navigation.jsp" %>
-		<br />
 		<h1 class="container-header">Edit Company</h1>
 		<div class="container">
 			<form action="create" method="post" enctype="multipart/form-data" onsubmit="return formIsValidForSaving()">
@@ -31,13 +31,13 @@
 			    <div class="table-row">
 			        <div class="col-left" id="address">Address:</div>
 			        <div class="col-right">
-			            <input type="text" name="companyAddress" id="companyAddress" value="<%= comapnySelectedForEdit.getAddress() %>"  maxlength="100" />
+			            <input type="text" name="companyAddress" id="companyAddress" value="<%= comapnySelectedForEdit.getAddress() %>"  maxlength="100" required />
 			        </div>
 			    </div>
 			    <div class="table-row">
 			        <div class="col-left" id="establishedDate">Established Date:</div>
 			        <div class="col-right">
-			            <input type="date" name="companyEstablishedDate" id="companyEstablishedDate" value="<%=comapnySelectedForEdit.getFormattedEstablishedDate() %>" />
+			            <input type="date" name="companyEstablishedDate" id="companyEstablishedDate" value="<%=comapnySelectedForEdit.getFormattedEstablishedDate() %>" required />
 			        </div>
 			    </div>
 			    <div class="table-row">

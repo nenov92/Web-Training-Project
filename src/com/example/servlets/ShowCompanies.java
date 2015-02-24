@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.hibernate.Session;
 
@@ -29,7 +30,7 @@ public class ShowCompanies extends HttpServlet {
 		SessionUtil.closeSession(dataBaseSession);
 
 		request.setAttribute("companiesInitial", companiesInitial);
-		request.getRequestDispatcher("showCompanies.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/showCompanies.jsp").forward(request, response);
 	}
 
 	@Override
@@ -44,9 +45,11 @@ public class ShowCompanies extends HttpServlet {
 		dataBaseSession.getTransaction().commit();
 		SessionUtil.closeSession(dataBaseSession);
 
-		request.setAttribute("companiesFromUserInput", companiesFromUserInput);
-		request.setAttribute("yValue", y);
-		request.getRequestDispatcher("showCompanies.jsp").forward(request, response);
+		HttpSession httpSession = request.getSession();
+		httpSession.setAttribute("companiesFromUserInput", companiesFromUserInput);
+		httpSession.setAttribute("xValue", x);
+		httpSession.setAttribute("yValue", y);
+		request.getRequestDispatcher("jsp/showCompanies.jsp").forward(request, response);
 	}
 
 }

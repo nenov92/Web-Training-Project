@@ -3,13 +3,13 @@
   <display-name>MyWebProject</display-name>
   <servlet>
     <servlet-name>createCompany</servlet-name>
-    <jsp-file>/createCompany.jsp</jsp-file>
+    <jsp-file>/jsp/createCompany.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
     <servlet-name>createCompany</servlet-name>
     <url-pattern>/createcompany</url-pattern>
   </servlet-mapping>
   <welcome-file-list>
-    <welcome-file>showCompanies.jsp</welcome-file>
+    <welcome-file>jsp/showCompanies.jsp</welcome-file>
   </welcome-file-list>
 </web-app>

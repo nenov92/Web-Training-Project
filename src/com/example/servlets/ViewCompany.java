@@ -31,7 +31,7 @@ public class ViewCompany extends HttpServlet {
 		SessionUtil.closeSession(dataBaseSession);
 
 		request.setAttribute("comapnySelectedForView", comapnySelectedForView);
-		request.getRequestDispatcher("viewCompany.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/viewCompany.jsp").forward(request, response);
 	}
 
 }

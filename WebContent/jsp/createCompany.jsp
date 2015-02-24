@@ -1,9 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<meta charset="UTF-8">
 		<title>Create Company</title>
 		
 		<link rel="stylesheet" type="text/css" href="css/app.css">
@@ -15,38 +15,37 @@
 	</head>
 	<body>
 		<%@include file="navigation.jsp" %>
-		<br />
 		<h1 class="container-header">Fill in Company Details</h1>
 		<div class="container">
 			<form action="create" method="post" enctype="multipart/form-data" onsubmit="return formIsValidForSaving()">
 			    <div class="table-row">
 			        <div class="col-left" id="name">Name:</div>
 			        <div class="col-right" id="companyNameInput">
-			        	<input type="text" name="companyName" id="companyName" maxlength="50" />
+			        	<input type="text" name="companyName" id="companyName" maxlength="50" required />
 			        </div>
 			    </div>
 			    <div class="table-row">
 			        <div class="col-left" id="address">Address:</div>
 			        <div class="col-right">
-			            <input type="text" name="companyAddress" id="companyAddress" maxlength="100" />
+			            <input type="text" name="companyAddress" id="companyAddress" maxlength="100" required />
 			        </div>
 			    </div>
 			    <div class="table-row">
 			        <div class="col-left" id="establishedDate">Established Date:</div>
 			        <div class="col-right">
-			            <input type="date" name="companyEstablishedDate" id="companyEstablishedDate"/>
+			            <input type="date" name="companyEstablishedDate" id="companyEstablishedDate" required />
 			        </div>
 			    </div>
 			    <div class="table-row">
 			        <div class="col-left" id="bulstat">Bulstat:</div>
 			        <div class="col-right" id="companyBulstatInput">
-			            <input type="text" name="companyBulstat" id="companyBulstat" maxlength="50" />
+			            <input type="text" name="companyBulstat" id="companyBulstat" maxlength="50" required />
 			        </div>
 			    </div>
 			    <div class="table-row">
 			        <div class="col-left" id="logo">Logo:</div>
 			        <div class="col-right">
-			            <input type="file" name="companyLogo" id="companyLogo" onchange="validateLogo()" />
+			            <input type="file" name="companyLogo" id="companyLogo" onchange="validateLogo()" required />
 			        </div>
 	    		</div>
 	    		<div class="table-row">

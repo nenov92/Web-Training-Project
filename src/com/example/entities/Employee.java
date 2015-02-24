@@ -1,5 +1,6 @@
 package com.example.entities;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,7 +26,8 @@ import org.hibernate.annotations.Cascade;
 
 @Entity
 @Table(name = "employee", uniqueConstraints = { @UniqueConstraint(columnNames = "personal_id"), @UniqueConstraint(columnNames = "email") })
-public class Employee {
+public class Employee implements Serializable{
+	private static final long serialVersionUID = -272548815723760978L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

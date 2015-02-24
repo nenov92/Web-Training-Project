@@ -1,11 +1,8 @@
 package com.example.servlets;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -13,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import org.hibernate.Session;
@@ -29,8 +27,12 @@ import com.example.utils.SessionUtil;
 public class CreateCompany extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Company company = null;
+
+		// Data received from jsp
 		String name = request.getParameter("companyName");
 		String address = request.getParameter("companyAddress");
 		Date establishedDate = ApplicationUtil.formatDate(request.getParameter("companyEstablishedDate"));
@@ -39,75 +41,48 @@ public class CreateCompany extends HttpServlet {
 		String bossIdAsString = request.getParameter("companyBoss");
 		Long bossId = null;
 
+		// name and path for logo
+		String fileName = Constants.FILE_NAME(bulstat);
+		String filePath = Constants.FILE_PATH(bulstat);
+
+		ApplicationUtil.saveImage(logo, filePath);
+
 		if (bossIdAsString != null) {
 			bossId = Long.parseLong(bossIdAsString);
 		}
 
-		InputStream logoContent = null;
-		OutputStream logoOut = null;
-
-		String fileName = "images/img" + bulstat + ".jpg";
-		String filePath = "C:/DevTools/Apache Tomcat v7.0/wtpwebapps/MyWebProjectStaticContent" + File.separator + fileName;
-
-		if (logo.getContentType().startsWith("image")) {
-			try {
-				logoContent = logo.getInputStream();
-
-				logoOut = new FileOutputStream(new File(filePath));
-
-				int read = 0;
-				byte[] bytes = new byte[1024];
-
-				while ((read = logoContent.read(bytes)) != -1) {
-					logoOut.write(bytes, 0, read);
-				}
-			} catch (IOException exception) {
-				exception.printStackTrace();
-			} finally {
-				if (logoContent != null) {
-					try {
-						logoContent.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (logoOut != null) {
-					try {
-						logoOut.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
+		// if company does not exist in db it will be created, otherwise it will be updated
+		Session dbSession = SessionUtil.openSession();
+		GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dbSession, Company.class);
+		GenericDaoImpl<Employee> employeeDao;
+		dbSession.beginTransaction();
+		if (companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat) == null) {
+			company = new Company(name, address, establishedDate, bulstat, fileName);
+		} else {
+			company = companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat);
+			company.setAddress(address);
+			company.setEstablishedDate(establishedDate);
+			company.setLogo(fileName);
+			if (bossId != null) {
+				employeeDao = new GenericDaoImpl<Employee>(dbSession, Employee.class);
+				Employee boss = employeeDao.findByUniqueParameter(Constants.SEARCH_BY_ID, bossId);
+				company.setBoss(boss);
 			}
 		}
+		companyDao.createOrUpdate(company);
+		dbSession.getTransaction().commit();
+		SessionUtil.closeSession(dbSession);
 
-		Company company;
-		try {
-			Session dbSession = SessionUtil.openSession();
-			GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dbSession, Company.class);
-			GenericDaoImpl<Employee> employeeDao;
-			dbSession.beginTransaction();
-			if (companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat) == null) {
-				company = new Company(name, address, establishedDate, bulstat, fileName);
-			} else {
-				company = companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat);
-				company.setAddress(address);
-				company.setEstablishedDate(establishedDate);
-				company.setLogo(fileName);
-				if (bossId != null) {
-					employeeDao = new GenericDaoImpl<Employee>(dbSession, Employee.class);
-					Employee boss = employeeDao.findByUniqueParameter(Constants.SEARCH_BY_ID, bossId);
-					company.setBoss(boss);
-				}
-			}
-			companyDao.createOrUpdate(company);
-			dbSession.getTransaction().commit();
-			SessionUtil.closeSession(dbSession);
-		} catch (Exception e) {
-			e.printStackTrace();
+		// if company does not exist it will be added to grid & redirect to main screen
+		HttpSession httpSession = request.getSession();
+		List<Company> companiesFromUserInput = (List<Company>) httpSession.getAttribute("companiesFromUserInput");
+		int x = (int) httpSession.getAttribute("xValue");
+		int y = (int) httpSession.getAttribute("yValue");
+		if (company != null && (!companiesFromUserInput.contains(company)) && (companiesFromUserInput.size() < x * y)) {
+			companiesFromUserInput.add(companiesFromUserInput.size(), company);
+			httpSession.setAttribute("companiesFromUserInput", companiesFromUserInput);
 		}
-
 		response.sendRedirect("companies");
 	}
-	
+
 }

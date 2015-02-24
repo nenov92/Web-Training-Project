@@ -1,13 +1,11 @@
-<%@ page import="java.util.Date"%>
-<%@ page import="java.text.SimpleDateFormat"%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" pageEncoding="UTF-8"%>
 
 <jsp:useBean id="comapnySelectedForView" class="com.example.entities.Company" scope="request" />
 
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<meta charset="UTF-8">
 		<title>View Company</title>
 		
 		<link rel="stylesheet" type="text/css" href="css/app.css">
@@ -16,7 +14,6 @@
 	</head>
 	<body>
 		<%@include file="navigation.jsp" %>
-		<br />
 		<h1 class="container-header">Company Details</h1>
 		<div class="container">
 		    <div class="table-row">

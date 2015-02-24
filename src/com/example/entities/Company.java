@@ -1,5 +1,6 @@
 package com.example.entities;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +28,8 @@ import com.example.utils.Constants;
 
 @Entity
 @Table(name = "company", uniqueConstraints = { @UniqueConstraint(columnNames = "name"), @UniqueConstraint(columnNames = "bulstat"), @UniqueConstraint(columnNames = "rating") })
-public class Company {
+public class Company implements Serializable {
+	private static final long serialVersionUID = -272069467918461129L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
