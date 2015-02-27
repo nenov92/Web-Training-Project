@@ -33,7 +33,7 @@ public class ApplicationUtil {
 		return date;
 	}
 
-	public static void saveImage(Part image, String filePath) {
+	public static boolean saveImage(Part image, String filePath) {
 		InputStream logoContent = null;
 		OutputStream logoOut = null;
 		
@@ -66,6 +66,9 @@ public class ApplicationUtil {
 					}
 				}
 			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 

@@ -6,6 +6,16 @@
 	display: none;
 }
 
+#userNotification {
+	width: 390px;
+	margin: 10px auto;
+}
+
+#generalError {
+	margin: 10px auto;
+	width: 500px;
+}
+
 /* loading indicator while ajax call is executed */
 .loadingIndicator {
 	display: none;
@@ -15,8 +25,8 @@
 	left: 0;
 	height: 100%;
 	width: 100%;
-	background: rgba(255, 255, 255, .8)
-		url('http://localhost:8080/MyWebProjectStaticContent/images/ajax-loader.gif')
+	background: rgba(255, 255, 255, .6)
+		url("http://localhost:8080/MyWebProjectStaticContent/images/ajax-loader.gif")
 		50% 50% no-repeat;
 }
 
@@ -28,16 +38,27 @@ body.loading .loadingIndicator {
 	display: block;
 }
 
+body {
+	background: #e6e6e6
+		url("http://localhost:8080/MyWebProjectStaticContent/images/bg.png") 0
+		0 repeat;
+}
+
 /* style used to display dimensions div */
 .grid-dimension {
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 20px;
-	width: 198px;
+	width: 202px;
 }
 
 .grid-dimension>p {
 	text-align: right;
+	color: #FFF;
+}
+
+#grid-dimension-span {
+	color: #FFF;
 }
 
 .grid-dimension-input {
@@ -212,7 +233,6 @@ header {
 	background-color: #ccc;
 	text-align: center;
 	padding: 0;
-	margin: 0px 100px;
 }
 
 .nav li {
@@ -224,6 +244,17 @@ header {
 
 .nav li:hover {
 	background-color: #fff;
+}
+
+.nav li:active {
+	background-color: #eee;
+	text-decoration: none;
+	color: #444 !important;
+}
+
+.nav a:active {
+	color: #444;
+	text-decoration: none;
 }
 
 .nav a {
@@ -246,19 +277,18 @@ header {
 		width: 120px;
 		border-bottom: none;
 		height: 50px;
+		float: left;
 		line-height: 50px;
 		font-size: 20px;
 		font-weight: bold;
+		border-right: 1px solid grey;
 	}
-	.nav li {
-		float: left;
+	.nav li:first-child {
+		border-left: 1px solid grey;
 	}
 	.nav ul {
 		overflow: auto;
-		width: 340px;
-		margin: 0 auto;
+		width: 100%;
 		padding: 0px 50px;
-		border-bottom-left-radius: 5px;
-		border-bottom-right-radius: 5px;
 	}
 }

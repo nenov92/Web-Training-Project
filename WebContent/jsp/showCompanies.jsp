@@ -2,6 +2,7 @@
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="com.example.entities.Company"%>
+<%@ page import="com.example.utils.Constants"%>
 
 <jsp:useBean id="companiesInitial" class="java.util.ArrayList" scope="request" />
 <jsp:useBean id="companiesFromUserInput" class="java.util.ArrayList" scope="session" />
@@ -23,10 +24,47 @@
 	</head>
 	<body>
 		<%@include file="navigation.jsp" %>
+		<%
+		if (session.getAttribute("userNotification") != null) {
+			String result = (String) session.getAttribute("userNotification");
+			if (result.equals(Constants.UNSUCCESSFUL_OUTCOME)) {
+				%>
+				<div id="userNotification">
+    				<div class="alert alert-danger alert-error">
+        				<a href="#" class="close" data-dismiss="alert">&times;</a>
+        				<strong>Error!</strong> Operation was unsuccessful!
+		    		</div>
+				</div>
+				<%
+				session.setAttribute("userNotification", null);
+			} else if (result.equals(Constants.SUCCESSFUL_CREATE)) {
+				%>
+				<div id="userNotification">
+    				<div class="alert alert-success">
+        				<a href="#" class="close" data-dismiss="alert">&times;</a>
+        				<strong>Success!</strong> Company was successfully created!
+		    		</div>
+				</div>
+				<%
+				session.setAttribute("userNotification", null);
+			} else if (result.equals(Constants.SUCCESSFUL_EDIT)) {
+				%>
+				<div id="userNotification">
+    				<div class="alert alert-success">
+        				<a href="#" class="close" data-dismiss="alert">&times;</a>
+        				<strong>Success!</strong> Company was successfully updated!
+		    		</div>
+				</div>
+				<%
+				session.setAttribute("userNotification", null);
+			}
+		}
+		%>
 		<div class="grid-dimension">
 			<p>Please select grid dimensions:</p>
 			<form action="companies" method="post">
-				<input type="number" class="grid-dimension-input" id="x-axis" name="x-axis" value="3" min="1" max="5" />x
+				<input type="number" class="grid-dimension-input" id="x-axis" name="x-axis" value="3" min="1" max="5" />
+				<span id="grid-dimension-span">x</span>
 				<input type="number" class="grid-dimension-input" id="y-axis" name="y-axis" value="3" min="1" max="5" />
 		  		<input type="submit" value="Apply"/>
 	  		</form>
@@ -150,6 +188,9 @@
 			
 			$(document).ready(function () {
 			    $("#myModal").modal('hide');
+			    if($("#userNotification")){
+			    	$("#userNotification").fadeOut(2500);
+			    }
 			});	
 			
 			$(document).ready(setX(<%=xValue%>));
@@ -157,7 +198,7 @@
 			
 			$(document).ready(enableLeftRight());
 			$(document).ready(enableTopBottom());
-	
+
 			function swapCompanies(divId1, divId2, successCallBack) {
 				var idOld = $("#"+divId1).children('#cellInner').children('.cellContent').children('#companyId').val();
 				var idNew = $("#"+divId2).children('#cellInner').children('.cellContent').children('#companyId').val();
@@ -334,7 +375,11 @@
 			            	}
 			            }
 			        } else if (i == 0 && rows.length<2){
-			        	// There is only one row, so north/south buttons are not needed
+			        	// There is only one row, so north/south buttons are not needed only padding
+			        	var cells = rows[i].getElementsByClassName("divCell");
+			            for (var j = 0; j < cells.length; j++) {
+			                cells[j].style.paddingTop = "22px";
+			           	}
 			        } else if (i == rows.length - 2) {
 			        	var cells = rows[i].getElementsByClassName("divCell");
 			            var cellsNextRow = rows[i + 1].getElementsByClassName("divCell");

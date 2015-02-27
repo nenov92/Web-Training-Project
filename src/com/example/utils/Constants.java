@@ -20,6 +20,11 @@ public class Constants {
 	public static final short COMPANY_BOSS_LEVEL = 1;
 	public static final short DEPARTMENT_BOSS_LEVEL = 2;
 
+	// values send to main screen when entity is created/edited successfully or not
+	public static final String SUCCESSFUL_CREATE = "create";
+	public static final String SUCCESSFUL_EDIT = "edit";
+	public static final String UNSUCCESSFUL_OUTCOME = "unsuccess";
+	
 	// name and path for images
 	public static String FILE_NAME(String uniqueObjectIdentifier) {
 		return "images/img" + uniqueObjectIdentifier + ".jpg";

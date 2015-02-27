@@ -19,66 +19,68 @@
 	</head>
 	<body>
 		<%@include file="navigation.jsp" %>
-		<h1 class="container-header">Edit Company</h1>
-		<div class="container">
-			<form action="create" method="post" enctype="multipart/form-data" onsubmit="return formIsValidForSaving()">
-			    <div class="table-row">
-			        <div class="col-left">Name:</div>
-			        <div class="col-right">
-			        	<input type="text" name="companyName" readonly="readonly" value="<%= comapnySelectedForEdit.getName() %>" />
-			        </div>
-			    </div>
-			    <div class="table-row">
-			        <div class="col-left" id="address">Address:</div>
-			        <div class="col-right">
-			            <input type="text" name="companyAddress" id="companyAddress" value="<%= comapnySelectedForEdit.getAddress() %>"  maxlength="100" required />
-			        </div>
-			    </div>
-			    <div class="table-row">
-			        <div class="col-left" id="establishedDate">Established Date:</div>
-			        <div class="col-right">
-			            <input type="date" name="companyEstablishedDate" id="companyEstablishedDate" value="<%=comapnySelectedForEdit.getFormattedEstablishedDate() %>" required />
-			        </div>
-			    </div>
-			    <div class="table-row">
-			        <div class="col-left">Bulstat:</div>
-			        <div class="col-right">
-			            <input type="text" name="companyBulstat" readonly="readonly" value="<%= comapnySelectedForEdit.getBulstat() %>" />
-			        </div>
-			    </div>
-			    <div class="table-row">
-			        <div class="col-left" id="logo">Logo:</div>
-			        <div class="col-right">
-			            <img id="image" src="/MyWebProjectStaticContent/<%= comapnySelectedForEdit.getLogo() %>" alt="Company Logo" />
-			            <input type="file" name="companyLogo" id="companyLogo" />
-			        </div>
-	    		</div>
-	    		<div class="table-row">
-			        <div class="col-left">Company Boss:</div>
-			        <div class="col-right">
-			        	<% if(comapnySelectedForEdit.getEmployeesSuitableForBoss().size() > 0){ %>
-				            <select name="companyBoss">
-				            	<% List<Employee> suitableEmployees = comapnySelectedForEdit.getEmployeesSuitableForBoss();
-				            	   for (Employee e : suitableEmployees){ 
-				            	   		if(comapnySelectedForEdit.getBoss().equals(e)){ %>
-				            		   		<option selected value="<%= e.getId() %>"><%=e.getName() %></option>
-				            	   		<% } else { %>
-				            	   			<option value="<%= e.getId() %>"><%=e.getName() %></option>
-				            	   		<% } %>
-				            	<% } %>
-				            </select>
-			        	<% } else { %>
-			        		<select name="companyBoss" disabled></select>
-			        	<% } %>	
-			        </div>
-	    		</div>
-				<div class="table-row">
-			        <div class="col-left">
-						<input type="submit" value="Save" />
-						<input type="button" value="Cancel" onclick="window.location.replace(document.referrer)" />
-			        </div>
-		    	</div>
-			</form>
+		<div class="divTable">
+			<h1 class="container-header">Edit Company</h1>
+			<div class="container">
+				<form action="create" method="post" enctype="multipart/form-data" onsubmit="return formIsValidForSaving()">
+				    <div class="table-row">
+				        <div class="col-left">Name:</div>
+				        <div class="col-right">
+				        	<input type="text" name="companyName" readonly="readonly" value="<%= comapnySelectedForEdit.getName() %>" />
+				        </div>
+				    </div>
+				    <div class="table-row">
+				        <div class="col-left" id="address">Address:</div>
+				        <div class="col-right">
+				            <input type="text" name="companyAddress" id="companyAddress" value="<%= comapnySelectedForEdit.getAddress() %>"  maxlength="100" required />
+				        </div>
+				    </div>
+				    <div class="table-row">
+				        <div class="col-left" id="establishedDate">Established Date:</div>
+				        <div class="col-right">
+				            <input type="date" name="companyEstablishedDate" id="companyEstablishedDate" value="<%=comapnySelectedForEdit.getFormattedEstablishedDate() %>" required />
+				        </div>
+				    </div>
+				    <div class="table-row">
+				        <div class="col-left">Bulstat:</div>
+				        <div class="col-right">
+				            <input type="text" name="companyBulstat" readonly="readonly" value="<%= comapnySelectedForEdit.getBulstat() %>" />
+				        </div>
+				    </div>
+				    <div class="table-row">
+				        <div class="col-left" id="logo">Logo:</div>
+				        <div class="col-right">
+				            <img id="image" src="/MyWebProjectStaticContent/<%= comapnySelectedForEdit.getLogo() %>" alt="Company Logo" />
+				            <input type="file" name="companyLogo" id="companyLogo" />
+				        </div>
+		    		</div>
+		    		<div class="table-row">
+				        <div class="col-left">Company Boss:</div>
+				        <div class="col-right">
+				        	<% if(comapnySelectedForEdit.getEmployeesSuitableForBoss().size() > 0){ %>
+					            <select name="companyBoss">
+					            	<% List<Employee> suitableEmployees = comapnySelectedForEdit.getEmployeesSuitableForBoss();
+					            	   for (Employee e : suitableEmployees){ 
+					            	   		if(comapnySelectedForEdit.getBoss().equals(e)){ %>
+					            		   		<option selected value="<%= e.getId() %>"><%=e.getName() %></option>
+					            	   		<% } else { %>
+					            	   			<option value="<%= e.getId() %>"><%=e.getName() %></option>
+					            	   		<% } %>
+					            	<% } %>
+					            </select>
+				        	<% } else { %>
+				        		<select name="companyBoss" disabled></select>
+				        	<% } %>	
+				        </div>
+		    		</div>
+					<div class="table-row">
+				        <div class="col-left">
+							<input type="submit" value="Save" />
+							<input type="button" value="Cancel" onclick="window.location.replace(document.referrer)" />
+				        </div>
+			    	</div>
+				</form>
+			</div>
 		</div>
 		<div id="myModal" class="modal">
 		    <div class="modal-dialog">

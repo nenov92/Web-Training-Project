@@ -9,6 +9,14 @@
     <servlet-name>createCompany</servlet-name>
     <url-pattern>/createcompany</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>generalErrorPage</servlet-name>
+    <jsp-file>/jsp/generalErrorPage.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>generalErrorPage</servlet-name>
+    <url-pattern>/error</url-pattern>
+  </servlet-mapping>
   <welcome-file-list>
     <welcome-file>jsp/showCompanies.jsp</welcome-file>
   </welcome-file-list>

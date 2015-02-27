@@ -2,7 +2,6 @@ package com.example.servlets;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -10,7 +9,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import org.hibernate.Session;
@@ -27,62 +25,89 @@ import com.example.utils.SessionUtil;
 public class CreateCompany extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Company company = null;
+		String userNotification = null;
 
 		// Data received from jsp
-		String name = request.getParameter("companyName");
-		String address = request.getParameter("companyAddress");
-		Date establishedDate = ApplicationUtil.formatDate(request.getParameter("companyEstablishedDate"));
-		String bulstat = request.getParameter("companyBulstat");
-		Part logo = request.getPart("companyLogo");
-		String bossIdAsString = request.getParameter("companyBoss");
+		String name = null;
+		String address = null;
+		Date establishedDate = null;
+		String bulstat = null;
+		Part logo = null;
 		Long bossId = null;
 
 		// name and path for logo
-		String fileName = Constants.FILE_NAME(bulstat);
-		String filePath = Constants.FILE_PATH(bulstat);
+		String fileName = null;
+		String filePath = null;
 
-		ApplicationUtil.saveImage(logo, filePath);
-
-		if (bossIdAsString != null) {
-			bossId = Long.parseLong(bossIdAsString);
+		// Data received from jsp validation
+		if (request.getParameter("companyName") != null && (request.getParameter("companyName").length() < 50)) {
+			name = request.getParameter("companyName");
+		}
+		if (request.getParameter("companyAddress") != null && (request.getParameter("companyAddress").length() < 100)) {
+			address = request.getParameter("companyAddress");
+		}
+		if (request.getParameter("companyEstablishedDate") != null) {
+			establishedDate = ApplicationUtil.formatDate(request.getParameter("companyEstablishedDate"));
+		}
+		if (request.getParameter("companyBulstat") != null && (request.getParameter("companyBulstat").length() < 50)) {
+			bulstat = request.getParameter("companyBulstat");
+			filePath = Constants.FILE_PATH(bulstat);
+		}
+		if (request.getPart("companyLogo") != null) {
+			logo = request.getPart("companyLogo");
+		}
+		if (request.getParameter("companyBoss") != null) {
+			bossId = Long.parseLong(request.getParameter("companyBoss"));
 		}
 
-		// if company does not exist in db it will be created, otherwise it will be updated
-		Session dbSession = SessionUtil.openSession();
-		GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dbSession, Company.class);
-		GenericDaoImpl<Employee> employeeDao;
-		dbSession.beginTransaction();
-		if (companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat) == null) {
-			company = new Company(name, address, establishedDate, bulstat, fileName);
-		} else {
-			company = companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat);
-			company.setAddress(address);
-			company.setEstablishedDate(establishedDate);
-			company.setLogo(fileName);
-			if (bossId != null) {
-				employeeDao = new GenericDaoImpl<Employee>(dbSession, Employee.class);
-				Employee boss = employeeDao.findByUniqueParameter(Constants.SEARCH_BY_ID, bossId);
-				company.setBoss(boss);
+		if (filePath != null && ApplicationUtil.saveImage(logo, filePath)) {
+			fileName = Constants.FILE_NAME(bulstat);
+		}
+
+		try {
+			Session dbSession = SessionUtil.openSession();
+			GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dbSession, Company.class);
+			GenericDaoImpl<Employee> employeeDao;
+			dbSession.beginTransaction();
+
+			if (name != null && address != null && establishedDate != null && bulstat != null) {
+				// if company does not exist in db it will be created, otherwise it will be updated
+				if (companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat) == null) {
+					if (fileName != null) {
+						company = new Company(name, address, establishedDate, bulstat, fileName);
+						userNotification = Constants.SUCCESSFUL_CREATE;
+					}
+				} else {
+					company = companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat);
+					company.setAddress(address);
+					company.setEstablishedDate(establishedDate);
+					if (fileName != null) {
+						company.setLogo(fileName);
+					}
+					if (bossId != null) {
+						employeeDao = new GenericDaoImpl<Employee>(dbSession, Employee.class);
+						Employee boss = employeeDao.findByUniqueParameter(Constants.SEARCH_BY_ID, bossId);
+						company.setBoss(boss);
+					}
+					userNotification = Constants.SUCCESSFUL_EDIT;
+				}
 			}
-		}
-		companyDao.createOrUpdate(company);
-		dbSession.getTransaction().commit();
-		SessionUtil.closeSession(dbSession);
+			if (company != null) {
+				companyDao.createOrUpdate(company);
+			} else{
+				userNotification = Constants.UNSUCCESSFUL_OUTCOME;
+			}
+			dbSession.getTransaction().commit();
+			SessionUtil.closeSession(dbSession);
 
-		// if company does not exist it will be added to grid & redirect to main screen
-		HttpSession httpSession = request.getSession();
-		List<Company> companiesFromUserInput = (List<Company>) httpSession.getAttribute("companiesFromUserInput");
-		int x = (int) httpSession.getAttribute("xValue");
-		int y = (int) httpSession.getAttribute("yValue");
-		if (company != null && (!companiesFromUserInput.contains(company)) && (companiesFromUserInput.size() < x * y)) {
-			companiesFromUserInput.add(companiesFromUserInput.size(), company);
-			httpSession.setAttribute("companiesFromUserInput", companiesFromUserInput);
+			request.getSession().setAttribute("userNotification", userNotification);
+			request.getRequestDispatcher("companies").forward(request, response);
+		} catch (Exception e) {
+			response.sendRedirect("error");
 		}
-		response.sendRedirect("companies");
 	}
 
 }

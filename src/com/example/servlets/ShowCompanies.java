@@ -35,21 +35,35 @@ public class ShowCompanies extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int x = Integer.parseInt(request.getParameter("x-axis"));
-		int y = Integer.parseInt(request.getParameter("y-axis"));
+		int x;
+		int y;
+		if (request.getParameter("x-axis") != null && request.getParameter("y-axis") != null) {
+			x = Integer.parseInt(request.getParameter("x-axis"));
+			y = Integer.parseInt(request.getParameter("y-axis"));
+		} else if (request.getSession().getAttribute("xValue") != null && request.getSession().getAttribute("yValue") != null) {
+			x = (int) request.getSession().getAttribute("xValue");
+			y = (int) request.getSession().getAttribute("yValue");
+		} else {
+			x = 3;
+			y = 3;
+		}
 
-		Session dataBaseSession = SessionUtil.openSession();
-		GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
-		dataBaseSession.beginTransaction();
-		List<Company> companiesFromUserInput = companyDao.findTop(x * y);
-		dataBaseSession.getTransaction().commit();
-		SessionUtil.closeSession(dataBaseSession);
+		try {
+			Session dataBaseSession = SessionUtil.openSession();
+			GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
+			dataBaseSession.beginTransaction();
+			List<Company> companiesFromUserInput = companyDao.findTop(x * y);
+			dataBaseSession.getTransaction().commit();
+			SessionUtil.closeSession(dataBaseSession);
 
-		HttpSession httpSession = request.getSession();
-		httpSession.setAttribute("companiesFromUserInput", companiesFromUserInput);
-		httpSession.setAttribute("xValue", x);
-		httpSession.setAttribute("yValue", y);
-		request.getRequestDispatcher("jsp/showCompanies.jsp").forward(request, response);
+			HttpSession httpSession = request.getSession();
+			httpSession.setAttribute("companiesFromUserInput", companiesFromUserInput);
+			httpSession.setAttribute("xValue", x);
+			httpSession.setAttribute("yValue", y);
+			request.getRequestDispatcher("jsp/showCompanies.jsp").forward(request, response);
+		} catch (Exception e) {
+			response.sendRedirect("error");
+		}
 	}
 
 }

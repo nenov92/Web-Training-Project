@@ -15,54 +15,56 @@
 	</head>
 	<body>
 		<%@include file="navigation.jsp" %>
-		<h1 class="container-header">Fill in Company Details</h1>
-		<div class="container">
-			<form action="create" method="post" enctype="multipart/form-data" onsubmit="return formIsValidForSaving()">
-			    <div class="table-row">
-			        <div class="col-left" id="name">Name:</div>
-			        <div class="col-right" id="companyNameInput">
-			        	<input type="text" name="companyName" id="companyName" maxlength="50" required />
-			        </div>
-			    </div>
-			    <div class="table-row">
-			        <div class="col-left" id="address">Address:</div>
-			        <div class="col-right">
-			            <input type="text" name="companyAddress" id="companyAddress" maxlength="100" required />
-			        </div>
-			    </div>
-			    <div class="table-row">
-			        <div class="col-left" id="establishedDate">Established Date:</div>
-			        <div class="col-right">
-			            <input type="date" name="companyEstablishedDate" id="companyEstablishedDate" required />
-			        </div>
-			    </div>
-			    <div class="table-row">
-			        <div class="col-left" id="bulstat">Bulstat:</div>
-			        <div class="col-right" id="companyBulstatInput">
-			            <input type="text" name="companyBulstat" id="companyBulstat" maxlength="50" required />
-			        </div>
-			    </div>
-			    <div class="table-row">
-			        <div class="col-left" id="logo">Logo:</div>
-			        <div class="col-right">
-			            <input type="file" name="companyLogo" id="companyLogo" onchange="validateLogo()" required />
-			        </div>
-	    		</div>
-	    		<div class="table-row">
-			        <div class="col-left">Company Boss:</div>
-			        <div class="col-right">
-			            <select name="companyBoss" disabled></select>
-			        </div>
-	    		</div>
-				<div class="table-row">
-					<div class="col-left">
-						<input type="submit" value="Create Company" id="createCompany"/>
-				   	</div>
-				    <div class="col-right">
-				    	<input type="button" value="Back" onclick="window.location.replace(document.referrer)" />
-				  	</div>
-		    	</div>
-			</form>
+		<div class="divTable">
+			<h1 class="container-header">Fill in Company Details</h1>
+			<div class="container">
+				<form action="create" method="post" enctype="multipart/form-data" onsubmit="return formIsValidForSaving()">
+				    <div class="table-row">
+				        <div class="col-left" id="name">Name:</div>
+				        <div class="col-right" id="companyNameInput">
+				        	<input type="text" name="companyName" id="companyName" maxlength="50" required />
+				        </div>
+				    </div>
+				    <div class="table-row">
+				        <div class="col-left" id="address">Address:</div>
+				        <div class="col-right">
+				            <input type="text" name="companyAddress" id="companyAddress" maxlength="100" required />
+				        </div>
+				    </div>
+				    <div class="table-row">
+				        <div class="col-left" id="establishedDate">Established Date:</div>
+				        <div class="col-right">
+				            <input type="date" name="companyEstablishedDate" id="companyEstablishedDate" required />
+				        </div>
+				    </div>
+				    <div class="table-row">
+				        <div class="col-left" id="bulstat">Bulstat:</div>
+				        <div class="col-right" id="companyBulstatInput">
+				            <input type="text" name="companyBulstat" id="companyBulstat" maxlength="50" required />
+				        </div>
+				    </div>
+				    <div class="table-row">
+				        <div class="col-left" id="logo">Logo:</div>
+				        <div class="col-right">
+				            <input type="file" name="companyLogo" id="companyLogo" onchange="validateLogo()" required />
+				        </div>
+		    		</div>
+		    		<div class="table-row">
+				        <div class="col-left">Company Boss:</div>
+				        <div class="col-right">
+				            <select name="companyBoss" disabled></select>
+				        </div>
+		    		</div>
+					<div class="table-row">
+						<div class="col-left">
+							<input type="submit" value="Create Company" id="createCompany"/>
+					   	</div>
+					    <div class="col-right">
+					    	<input type="button" value="Back" onclick="window.location.replace(document.referrer)" />
+					  	</div>
+			    	</div>
+				</form>
+			</div>
 		</div>
 		<div id="myModal" class="modal">
 		    <div class="modal-dialog">
@@ -72,8 +74,7 @@
 		                <h4 class="modal-title">Alert</h4>
 		            </div>
 		            <div class="modal-body">
-		                <p>All company details must be filled in!</p>
-		                <span style="font-size: small;">* Name and Bulstat should be unique!</span>
+		                <p>Name and bulstat fields should have unique values!</p>
 		            </div>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Okay</button>
