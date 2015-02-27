@@ -4,14 +4,11 @@
 <%@ page import="com.example.entities.Company"%>
 <%@ page import="com.example.utils.Constants"%>
 
-<jsp:useBean id="companiesInitial" class="java.util.ArrayList" scope="request" />
-<jsp:useBean id="companiesFromUserInput" class="java.util.ArrayList" scope="session" />
+<jsp:useBean id="companiesFromDb" class="java.util.ArrayList" scope="session" />
 
 <!DOCTYPE html>
 <html>
 	<head>
-		<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-	
 		<meta charset="UTF-8">
 		<title>Companies</title>
 		
@@ -27,6 +24,7 @@
 		<%
 		if (session.getAttribute("userNotification") != null) {
 			String result = (String) session.getAttribute("userNotification");
+			
 			if (result.equals(Constants.UNSUCCESSFUL_OUTCOME)) {
 				%>
 				<div id="userNotification">
@@ -36,7 +34,6 @@
 		    		</div>
 				</div>
 				<%
-				session.setAttribute("userNotification", null);
 			} else if (result.equals(Constants.SUCCESSFUL_CREATE)) {
 				%>
 				<div id="userNotification">
@@ -46,7 +43,6 @@
 		    		</div>
 				</div>
 				<%
-				session.setAttribute("userNotification", null);
 			} else if (result.equals(Constants.SUCCESSFUL_EDIT)) {
 				%>
 				<div id="userNotification">
@@ -56,8 +52,9 @@
 		    		</div>
 				</div>
 				<%
-				session.setAttribute("userNotification", null);
 			}
+			
+			session.removeAttribute("userNotification");
 		}
 		%>
 		<div class="grid-dimension">
@@ -74,7 +71,7 @@
 					<%
 						int xValue;
 						int yValue;
-						List<Company> companiesForDisplay;
+						List<Company> companiesForDisplay = new ArrayList<Company>(companiesFromDb);
 
 						if (session.getAttribute("yValue") != null) {
 							yValue = Integer.parseInt(session.getAttribute("yValue").toString());
@@ -86,12 +83,6 @@
 							xValue = Integer.parseInt(session.getAttribute("xValue").toString());
 						} else {
 							xValue = 3;
-						}
-
-						if (companiesFromUserInput.isEmpty()) {
-							companiesForDisplay = new ArrayList<Company>(companiesInitial);
-						} else {
-							companiesForDisplay = new ArrayList<Company>(companiesFromUserInput);
 						}
 
 						for (int i = 0; i < companiesForDisplay.size(); i++) {
@@ -188,6 +179,7 @@
 			
 			$(document).ready(function () {
 			    $("#myModal").modal('hide');
+			    console.log($("#userNotification"));
 			    if($("#userNotification")){
 			    	$("#userNotification").fadeOut(2500);
 			    }

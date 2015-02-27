@@ -28,6 +28,8 @@ public class CreateCompany extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Company company = null;
+		
+		// to inform user whether company was successfully created/updated or not
 		String userNotification = null;
 
 		// Data received from jsp
@@ -104,7 +106,7 @@ public class CreateCompany extends HttpServlet {
 			SessionUtil.closeSession(dbSession);
 
 			request.getSession().setAttribute("userNotification", userNotification);
-			request.getRequestDispatcher("companies").forward(request, response);
+			response.sendRedirect("companies");
 		} catch (Exception e) {
 			response.sendRedirect("error");
 		}

@@ -22,21 +22,18 @@ public class ShowCompanies extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Session dataBaseSession = SessionUtil.openSession();
-		GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
-		dataBaseSession.beginTransaction();
-		List<Company> companiesInitial = companyDao.findTop(9);
-		dataBaseSession.getTransaction().commit();
-		SessionUtil.closeSession(dataBaseSession);
-
-		request.setAttribute("companiesInitial", companiesInitial);
-		request.getRequestDispatcher("jsp/showCompanies.jsp").forward(request, response);
+		doPost(request, response);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		loadCompanies(request, response);
+	}
+
+	private void loadCompanies(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int x;
 		int y;
+
 		if (request.getParameter("x-axis") != null && request.getParameter("y-axis") != null) {
 			x = Integer.parseInt(request.getParameter("x-axis"));
 			y = Integer.parseInt(request.getParameter("y-axis"));
@@ -52,12 +49,12 @@ public class ShowCompanies extends HttpServlet {
 			Session dataBaseSession = SessionUtil.openSession();
 			GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
 			dataBaseSession.beginTransaction();
-			List<Company> companiesFromUserInput = companyDao.findTop(x * y);
+			List<Company> companiesFromDb = companyDao.findTop(x * y);
 			dataBaseSession.getTransaction().commit();
 			SessionUtil.closeSession(dataBaseSession);
 
 			HttpSession httpSession = request.getSession();
-			httpSession.setAttribute("companiesFromUserInput", companiesFromUserInput);
+			httpSession.setAttribute("companiesFromDb", companiesFromDb);
 			httpSession.setAttribute("xValue", x);
 			httpSession.setAttribute("yValue", y);
 			request.getRequestDispatcher("jsp/showCompanies.jsp").forward(request, response);
