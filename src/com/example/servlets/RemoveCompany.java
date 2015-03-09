@@ -31,9 +31,11 @@ public class RemoveCompany extends HttpServlet {
 			companyDao.delete(comapnySelectedForRemoval);
 		}
 		dataBaseSession.getTransaction().commit();
+		//TODO remove close session
 		SessionUtil.closeSession(dataBaseSession);
-
-		request.getRequestDispatcher("companies").forward(request, response);
+		
+		request.getSession().setAttribute("userNotification", Constants.SUCCESSFUL_REMOVE);
+		response.sendRedirect("companies");
 	}
 
 }

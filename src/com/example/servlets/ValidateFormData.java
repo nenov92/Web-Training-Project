@@ -48,6 +48,7 @@ public class ValidateFormData extends HttpServlet {
 		Session dbSession = SessionUtil.openSession();
 		GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dbSession, Company.class);
 		dbSession.beginTransaction();
+		// TODO optimize code below & do not close session
 		if (companyDao.findByUniqueParameter(searchBy, parameterValue) == null) {
 			dbSession.getTransaction().commit();
 			SessionUtil.closeSession(dbSession);

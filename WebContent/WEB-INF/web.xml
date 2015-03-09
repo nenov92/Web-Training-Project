@@ -2,11 +2,11 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <display-name>MyWebProject</display-name>
   <servlet>
-    <servlet-name>createCompany</servlet-name>
-    <jsp-file>/jsp/createCompany.jsp</jsp-file>
+    <servlet-name>createOrUpdateCompany</servlet-name>
+    <jsp-file>/jsp/createOrUpdateCompany.jsp</jsp-file>
   </servlet>
   <servlet-mapping>
-    <servlet-name>createCompany</servlet-name>
+    <servlet-name>createOrUpdateCompany</servlet-name>
     <url-pattern>/createcompany</url-pattern>
   </servlet-mapping>
   <servlet>

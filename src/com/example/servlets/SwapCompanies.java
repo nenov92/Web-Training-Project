@@ -28,9 +28,10 @@ public class SwapCompanies extends HttpServlet {
 		dataBaseSession.beginTransaction();
 		GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
 
+		// use one call to db for both
 		Company comapnyForSwapping = companyDao.findByUniqueParameter(Constants.SEARCH_BY_ID, idOld);
 		Company comapnyToSwap = companyDao.findByUniqueParameter(Constants.SEARCH_BY_ID, idNew);
-
+		// unit test for rating swapping and rollback
 		long ratingForSwapping = comapnyForSwapping.getRating();
 		long ratingToSwap = comapnyToSwap.getRating();
 

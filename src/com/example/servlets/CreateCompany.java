@@ -77,6 +77,7 @@ public class CreateCompany extends HttpServlet {
 
 			if (name != null && address != null && establishedDate != null && bulstat != null) {
 				// if company does not exist in db it will be created, otherwise it will be updated
+				// TODO line 81 & 87 use one call to db
 				if (companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat) == null) {
 					if (fileName != null) {
 						company = new Company(name, address, establishedDate, bulstat, fileName);

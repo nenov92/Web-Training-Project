@@ -52,6 +52,15 @@
 		    		</div>
 				</div>
 				<%
+			} else if (result.equals(Constants.SUCCESSFUL_REMOVE)) {
+				%>
+				<div id="userNotification">
+    				<div class="alert alert-success">
+        				<a href="#" class="close" data-dismiss="alert">&times;</a>
+        				<strong>Success!</strong> Company was successfully removed!
+		    		</div>
+				</div>
+				<%
 			}
 			
 			session.removeAttribute("userNotification");
@@ -71,8 +80,10 @@
 					<%
 						int xValue;
 						int yValue;
+						// TODO use list from servlet
 						List<Company> companiesForDisplay = new ArrayList<Company>(companiesFromDb);
 
+						// use only values from servlet
 						if (session.getAttribute("yValue") != null) {
 							yValue = Integer.parseInt(session.getAttribute("yValue").toString());
 						} else {
@@ -86,6 +97,7 @@
 						}
 
 						for (int i = 0; i < companiesForDisplay.size(); i++) {
+							// TODO remove
 							if (companiesForDisplay.get(i) == null) {
 								continue;
 							}
@@ -106,6 +118,7 @@
 							<input type="hidden" id="companyId" name="companyId" value="<%=((Company) companiesForDisplay.get(i)).getId()%>" />
 						</div>
 						<div class="cellNavigation">
+	            	    	<%-- TODO merge to one form & use only one hidden field with comp id --%>
 	            	    	<form>
 	            	    		<input type="hidden" name="" value="" />
 	            	    		<input disabled class="submit-button" type="submit" value="View&#x00A;Departments" />
@@ -118,6 +131,7 @@
 	            	    		<input type="hidden" name="viewId" value="<%=((Company) companiesForDisplay.get(i)).getId()%>" />
 	            	    		<input class="submit-button" type="submit" value="View" />
 	            	    	</form>
+	            	    	<%-- change openPopUp naming --%>
 	            	    	<input class="submit-button" type="button" value="Remove" onclick="openPopUp(<%=((Company) companiesForDisplay.get(i)).getId()%>)" />
 						</div>
            			</div>
@@ -126,6 +140,7 @@
 						<%	}%>
 			</div>
 		</div>
+		<%-- hide with CSS --%>
 		<div id="myModal" class="modal">
 		    <div class="modal-dialog">
 		        <div class="modal-content">
@@ -138,7 +153,7 @@
 		            </div>
 		            <div class="modal-footer">
 		                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		                <form class="display-inline" action="removecompany" method="post">
+		                <form class="display-inline" id="removeForm" action="removecompany" method="post">
 	            	    	<input type="hidden" id="removeId" name="companyRemoveId" value="">
 	            	    	<input class="btn btn-primary" type="submit" value="Remove" onclick="removeCompany()">
 	            	    </form>
@@ -146,272 +161,11 @@
 		        </div>
 		    </div>
 		</div>
+		<script src="js/showCompanies.js"></script>
 		<script>
-			var companyId,
-				x = null,
-				y = null;
-			
-			function setX(x){
-				if (x != null){
-					$("#x-axis").val(x);
-				}
-			}
-			
-			function setY(y){
-				if (y != null){
-					$("#y-axis").val(y);
-				}
-			}
-			
-			function openPopUp(companyId) {
-			    $("#myModal").modal('show');
-			    setCompanyId(companyId);
-			}
-	
-			function removeCompany() {
-			    $("#myModal").modal('hide');
-			    $("#removeId").val(this.companyId);
-			}
-	
-			function setCompanyId(companyId) {
-			    this.companyId = companyId;
-			}
-			
-			$(document).ready(function () {
-			    $("#myModal").modal('hide');
-			    console.log($("#userNotification"));
-			    if($("#userNotification")){
-			    	$("#userNotification").fadeOut(2500);
-			    }
-			});	
-			
+			// in grid dimensions set current x and y values
 			$(document).ready(setX(<%=xValue%>));
 			$(document).ready(setY(<%=yValue%>));
-			
-			$(document).ready(enableLeftRight());
-			$(document).ready(enableTopBottom());
-
-			function swapCompanies(divId1, divId2, successCallBack) {
-				var idOld = $("#"+divId1).children('#cellInner').children('.cellContent').children('#companyId').val();
-				var idNew = $("#"+divId2).children('#cellInner').children('.cellContent').children('#companyId').val();
-				
-				$.ajax({
-	                type: "POST",
-	                url: "swapcompanies",
-	                data: {idOld: idOld, idNew: idNew},
-	                dataType: "json",
-	                success: function(response){
-	                	successCallBack(divId1, divId2);
-	                },
-	                error: function(response, status, error){
-	                	console.log(error);
-	                }
-	            });
-			}
-			
-			function disableButtonsDuringAnimation(bool){
-				var btns = $('button');
-				for (var i=0; i<btns.length; i++){
-					btns[i].disabled = bool;
-				}
-			}
-			
-			function swapInnerContentRight(divId1, divId2){
-				var divInner1 = $("#"+divId1).children('.cellInner').get(0);
-				var divInner2 = $("#"+divId2).children('.cellInner').get(0);
-				
-				$(divInner2).animate({left: "-340px", opacity: 0.8}, 2500);
-				$(divInner1).animate({left: "340px", opacity: 0.8}, 2500);
-				
-				disableButtonsDuringAnimation(true);
-				
-				setTimeout(function () {
-				$(divInner1).css('left', '0px');
-				$(divInner2).css('left', '0px');
-				
-				$(divInner1).css('opacity', '1');
-				$(divInner2).css('opacity', '1');
-
-				$(divInner1).replaceWith($("#"+divId2).children('.cellInner').get(0));
-				$(divInner1).insertBefore($("#"+divId2).children("#southBtn"));
-				
-				disableButtonsDuringAnimation(false);
-				}, 2600);
-			}
-			
-			function swapInnerContentLeft(divId1, divId2){
-				var divInner1 = $("#"+divId1).children('.cellInner').get(0);
-				var divInner2 = $("#"+divId2).children('.cellInner').get(0);
-				
-				$(divInner2).animate({left: "340px", opacity: 0.8}, 2500);
-				$(divInner1).animate({left: "-340px", opacity: 0.8}, 2500);
-				
-				disableButtonsDuringAnimation(true);
-				
-				setTimeout(function () {
-				$(divInner1).css('left', '0px');
-				$(divInner2).css('left', '0px');
-				
-				$(divInner1).css('opacity', '1');
-				$(divInner2).css('opacity', '1');
-				
-				$(divInner1).replaceWith($("#"+divId2).children('.cellInner').get(0));
-				$(divInner1).insertBefore($("#"+divId2).children("#southBtn"));
-				
-				disableButtonsDuringAnimation(false);
-				}, 2600);
-			}
-			
-			function swapInnerContentTop(divId1, divId2){
-				var divInner1 = $("#"+divId1).children('.cellInner').get(0);
-				var divInner2 = $("#"+divId2).children('.cellInner').get(0);
-				
-				$(divInner2).animate({top: "256px", opacity: 0.8}, 2500);
-				$(divInner1).animate({top: "-256px", opacity: 0.8}, 2500);
-				
-				disableButtonsDuringAnimation(true);
-				
-				setTimeout(function () {
-				$(divInner1).css('top', '0px');
-				$(divInner2).css('top', '0px');
-				
-				$(divInner1).css('opacity', '1');
-				$(divInner2).css('opacity', '1');
-				
-				$(divInner1).replaceWith($("#"+divId2).children('.cellInner').get(0));
-				$(divInner1).insertBefore($("#"+divId2).children("#southBtn"));
-				
-				disableButtonsDuringAnimation(false);
-				}, 2600);
-			}
-			
-			function swapInnerContentBottom(divId1, divId2){
-				var divInner1 = $("#"+divId1).children('.cellInner').get(0);
-				var divInner2 = $("#"+divId2).children('.cellInner').get(0);
-				
-				$(divInner2).animate({top: "-256px", opacity: 0.8}, 2500);
-				$(divInner1).animate({top: "256px", opacity: 0.8}, 2500);
-				
-				disableButtonsDuringAnimation(true);
-				
-				setTimeout(function () {
-				$(divInner1).css('top', '0px');
-				$(divInner2).css('top', '0px');
-				
-				$(divInner1).css('opacity', '1');
-				$(divInner2).css('opacity', '1');
-				
-				$(divInner1).replaceWith($("#"+divId2).children('.cellInner').get(0));
-				$(divInner1).insertBefore($("#"+divId2).children("#southBtn"));
-				
-				disableButtonsDuringAnimation(false);
-				}, 2600);
-			}
-			
-			function enableLeftRight(){
-				//var rows = document.getElementById("divTable").getElementsByClassName("divRow");
-				var rows = $("#divTable").children(".divRow");
-				for (var i = 0; i<rows.length; i++){
-					//var cells = rows[i].getElementsByClassName("divCell");
-					var cells = rows.get(i).children;
-					for(var j = 0; j<cells.length; j++) {
-						if(j==0 && cells.length > 1){
-							// First cell on this row
-							var eastButton = cells[j].getElementsByTagName("button").eastBtn;
-							eastButton.className = "navigation-button east";
-						} else if(j==0 && cells.length == 1) {
-							// There is only one cell per row, so east/west buttons are not needed
-						} else if(j==cells.length-1){
-							// Last cell on this row
-							var westButton = cells[j].getElementsByTagName("button").westBtn;
-							westButton.className = "navigation-button west";					
-						} else {
-							// Every cell between first and last
-							var eastButton = cells[j].getElementsByTagName("button").eastBtn;
-							eastButton.className = "navigation-button east";
-							
-							var westButton = cells[j].getElementsByTagName("button").westBtn;
-							westButton.className = "navigation-button west";		
-						}
-					}
-				}
-			}
-			
-			function enableTopBottom() {
-			    var rows = document.getElementById("divTable").getElementsByClassName("divRow");
-			    for (var i = 0; i < rows.length; i++) {
-			        if (i == 0 && rows.length>2) {
-			            var cells = rows[i].getElementsByClassName("divCell");
-			            for (var j = 0; j < cells.length; j++) {
-			                cells[j].style.paddingTop = "22px";
-			                var southButton = cells[j].lastElementChild;
-			                southButton.className = "south";
-			            }
-			        } else if(i == 0 && rows.length==2){
-			        	var cells = rows[i].getElementsByClassName("divCell");
-			            var cellsNextRow = rows[i + 1].getElementsByClassName("divCell");
-			            if (cells.length != cellsNextRow.length) {
-			                var difference = cells.length - cellsNextRow.length;
-			                for (var j = 0; j < cells.length; j++){
-			                	cells[j].style.paddingTop = "22px";
-			                }
-			                for (var j = 0; j < (cells.length-difference); j++){
-			                	var southButton = cells[j].lastElementChild;
-				                southButton.className = "south";
-			                }
-			            } else {
-			            	for (var j = 0; j < cells.length; j++) {
-			            		cells[j].style.paddingTop = "22px";
-			            		var southButton = cells[j].lastElementChild;
-			                	southButton.className = "south";
-			            	}
-			            }
-			        } else if (i == 0 && rows.length<2){
-			        	// There is only one row, so north/south buttons are not needed only padding
-			        	var cells = rows[i].getElementsByClassName("divCell");
-			            for (var j = 0; j < cells.length; j++) {
-			                cells[j].style.paddingTop = "22px";
-			           	}
-			        } else if (i == rows.length - 2) {
-			        	var cells = rows[i].getElementsByClassName("divCell");
-			            var cellsNextRow = rows[i + 1].getElementsByClassName("divCell");
-		                for (var j = 0; j < cells.length; j++) {
-		                    var northButton = cells[j].getElementsByTagName("button").northBtn;
-		                    northButton.className = "navigation-button north";
-		                }
-			            if (cells.length != cellsNextRow.length) {
-			                var difference = cells.length - cellsNextRow.length;
-			                for (var j = 0; j < (cells.length-difference); j++){
-			                	var southButton = cells[j].lastElementChild;
-				                southButton.className = "south";
-			                }
-			            } else {
-			            	for (var j = 0; j < cells.length; j++) {
-			            		var northButton = cells[j].getElementsByTagName("button").northBtn;
-				                northButton.className = "navigation-button north";
-
-			                	var southButton = cells[j].lastElementChild;
-			                	southButton.className = "south";
-			            	}
-			            }
-			        } else if (i == rows.length - 1) {
-			            var cells = rows[i].getElementsByClassName("divCell");
-			            for (var j = 0; j < cells.length; j++) {
-			                var northButton = cells[j].getElementsByTagName("button").northBtn;
-			                northButton.className = "navigation-button north";
-			            }
-			        } else {
-			        	var cells = rows[i].getElementsByClassName("divCell");
-				        for (var j = 0; j < cells.length; j++) {
-			            	var northButton = cells[j].getElementsByTagName("button").northBtn;
-			            	northButton.className = "navigation-button north";
-
-			            	var southButton = cells[j].lastElementChild;
-			            	southButton.className = "south";
-				        }
-			        }
-			    }
-			}
 		</script>
 	</body>
 </html>

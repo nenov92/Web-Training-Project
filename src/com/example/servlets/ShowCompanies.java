@@ -33,7 +33,7 @@ public class ShowCompanies extends HttpServlet {
 	private void loadCompanies(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int x;
 		int y;
-
+		// TODO use only x, y from session
 		if (request.getParameter("x-axis") != null && request.getParameter("y-axis") != null) {
 			x = Integer.parseInt(request.getParameter("x-axis"));
 			y = Integer.parseInt(request.getParameter("y-axis"));
@@ -51,6 +51,7 @@ public class ShowCompanies extends HttpServlet {
 			dataBaseSession.beginTransaction();
 			List<Company> companiesFromDb = companyDao.findTop(x * y);
 			dataBaseSession.getTransaction().commit();
+			// TODO do not close session
 			SessionUtil.closeSession(dataBaseSession);
 
 			HttpSession httpSession = request.getSession();

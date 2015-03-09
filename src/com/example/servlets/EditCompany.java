@@ -31,7 +31,7 @@ public class EditCompany extends HttpServlet {
 		SessionUtil.closeSession(dataBaseSession);
 
 		request.setAttribute("comapnySelectedForEdit", comapnySelectedForEdit);
-		request.getRequestDispatcher("jsp/editCompany.jsp").forward(request, response);
+		request.getRequestDispatcher("jsp/createOrUpdateCompany.jsp").forward(request, response);
 	}
 
 }
