@@ -1,6 +1,4 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.ArrayList"%>
 <%@ page import="com.example.entities.Company"%>
 <%@ page import="com.example.utils.Constants"%>
 
@@ -20,7 +18,7 @@
 		<script src="js/bootstrap.min.js"></script>
 	</head>
 	<body>
-		<%@include file="navigation.jsp" %>
+		<%@include file="navigation.jsp"%>
 		<%
 		if (session.getAttribute("userNotification") != null) {
 			String result = (String) session.getAttribute("userNotification");
@@ -78,29 +76,10 @@
 		<div class="divTable" id="divTable">
 	    	<div class="divRow" id="divRow">
 					<%
-						int xValue;
-						int yValue;
-						// TODO use list from servlet
-						List<Company> companiesForDisplay = new ArrayList<Company>(companiesFromDb);
+						int xValue = Integer.parseInt(session.getAttribute("xValue").toString());
+						int yValue = Integer.parseInt(session.getAttribute("yValue").toString());
 
-						// use only values from servlet
-						if (session.getAttribute("yValue") != null) {
-							yValue = Integer.parseInt(session.getAttribute("yValue").toString());
-						} else {
-							yValue = 3;
-						}
-
-						if (session.getAttribute("xValue") != null) {
-							xValue = Integer.parseInt(session.getAttribute("xValue").toString());
-						} else {
-							xValue = 3;
-						}
-
-						for (int i = 0; i < companiesForDisplay.size(); i++) {
-							// TODO remove
-							if (companiesForDisplay.get(i) == null) {
-								continue;
-							}
+						for (int i = 0; i < companiesFromDb.size(); i++) {
 							if ((i != 0) && (i % yValue == 0)) {
 					%>
 			</div>
@@ -112,27 +91,17 @@
            			<button id="westBtn" class="hideElement" onclick="swapCompanies(this.parentElement.id, parseInt(this.parentElement.id) - 1, swapInnerContentLeft)">&#60;</button>
                    	<div class="cellInner" id="cellInner">
 						<div class="cellContent">
-							<label><%=companiesForDisplay.get(i).getName()%></label>
-							<br />
-							<img src="/MyWebProjectStaticContent/<%=companiesForDisplay.get(i).getLogo()%>" alt="Company Logo">
-							<input type="hidden" id="companyId" name="companyId" value="<%=((Company) companiesForDisplay.get(i)).getId()%>" />
+							<label style="margin-bottom:10px"><%=((Company) companiesFromDb.get(i)).getName()%></label>
+							<img src="/MyWebProjectStaticContent/<%=((Company) companiesFromDb.get(i)).getLogo()%>" alt="Company Logo">
+							<input type="hidden" id="companyId" name="companyId" value="<%=((Company) companiesFromDb.get(i)).getId()%>" />
 						</div>
 						<div class="cellNavigation">
-	            	    	<%-- TODO merge to one form & use only one hidden field with comp id --%>
 	            	    	<form>
-	            	    		<input type="hidden" name="" value="" />
-	            	    		<input disabled class="submit-button" type="submit" value="View&#x00A;Departments" />
+		            	    	<button class="submit-button" type="submit" formaction="" formmethod="post" name="" value="<%=((Company) companiesFromDb.get(i)).getId()%>" disabled>View&#x00A;Departments</button>
+		            	    	<button class="submit-button" type="submit" formaction="editcompany" formmethod="post" name="companyEditId" value="<%=((Company) companiesFromDb.get(i)).getId()%>">Edit</button>
+		            	    	<button class="submit-button" type="submit" formaction="viewcompany" formmethod="post" name="viewId" value="<%=((Company) companiesFromDb.get(i)).getId()%>">View</button>
 	            	    	</form>
-	            	    	<form action="editcompany" method="post">
-	            	    		<input type="hidden" name="companyEditId" value="<%=((Company) companiesForDisplay.get(i)).getId()%>" />
-	            	    		<input class="submit-button" type="submit" value="Edit" />
-	            	    	</form>
-	            	    	<form action="viewcompany" method="post">
-	            	    		<input type="hidden" name="viewId" value="<%=((Company) companiesForDisplay.get(i)).getId()%>" />
-	            	    		<input class="submit-button" type="submit" value="View" />
-	            	    	</form>
-	            	    	<%-- change openPopUp naming --%>
-	            	    	<input class="submit-button" type="button" value="Remove" onclick="openPopUp(<%=((Company) companiesForDisplay.get(i)).getId()%>)" />
+	            	    	<button class="submit-button" onclick="openRemovePopUp(<%=((Company) companiesFromDb.get(i)).getId()%>)">Remove</button> 
 						</div>
            			</div>
 					<button id="southBtn" class="hideElement" onclick="swapCompanies(this.parentElement.id, parseInt(this.parentElement.id) + <%=yValue%>, swapInnerContentBottom)">v</button>
@@ -140,7 +109,6 @@
 						<%	}%>
 			</div>
 		</div>
-		<%-- hide with CSS --%>
 		<div id="myModal" class="modal">
 		    <div class="modal-dialog">
 		        <div class="modal-content">

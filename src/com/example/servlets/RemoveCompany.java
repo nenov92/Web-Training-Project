@@ -21,21 +21,23 @@ public class RemoveCompany extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		long id = Long.parseLong(request.getParameter("companyRemoveId"));
+		try {
+			long id = Long.parseLong(request.getParameter("companyRemoveId"));
 
-		Session dataBaseSession = SessionUtil.openSession();
-		dataBaseSession.beginTransaction();
-		GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
-		Company comapnySelectedForRemoval = companyDao.findByUniqueParameter(Constants.SEARCH_BY_ID, id);
-		if (comapnySelectedForRemoval != null) {
-			companyDao.delete(comapnySelectedForRemoval);
+			Session dataBaseSession = SessionUtil.getINSTANCE();
+			SessionUtil.beginTransaction();
+			GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
+			Company comapnySelectedForRemoval = companyDao.findByUniqueParameter(Constants.SEARCH_BY_ID, id);
+			if (comapnySelectedForRemoval != null) {
+				companyDao.delete(comapnySelectedForRemoval);
+			}
+			SessionUtil.commitTransaction();
+
+			request.getSession().setAttribute("userNotification", Constants.SUCCESSFUL_REMOVE);
+			response.sendRedirect("companies");
+		} catch (Exception e) {
+			response.sendRedirect("error");
 		}
-		dataBaseSession.getTransaction().commit();
-		//TODO remove close session
-		SessionUtil.closeSession(dataBaseSession);
-		
-		request.getSession().setAttribute("userNotification", Constants.SUCCESSFUL_REMOVE);
-		response.sendRedirect("companies");
 	}
 
 }

@@ -28,7 +28,7 @@ public class CreateCompany extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Company company = null;
-		
+
 		// to inform user whether company was successfully created/updated or not
 		String userNotification = null;
 
@@ -70,21 +70,20 @@ public class CreateCompany extends HttpServlet {
 		}
 
 		try {
-			Session dbSession = SessionUtil.openSession();
+			Session dbSession = SessionUtil.getINSTANCE();
 			GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dbSession, Company.class);
 			GenericDaoImpl<Employee> employeeDao;
-			dbSession.beginTransaction();
+			SessionUtil.beginTransaction();
+			company = companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat);
 
 			if (name != null && address != null && establishedDate != null && bulstat != null) {
 				// if company does not exist in db it will be created, otherwise it will be updated
-				// TODO line 81 & 87 use one call to db
-				if (companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat) == null) {
+				if (company == null) {
 					if (fileName != null) {
 						company = new Company(name, address, establishedDate, bulstat, fileName);
 						userNotification = Constants.SUCCESSFUL_CREATE;
 					}
 				} else {
-					company = companyDao.findByUniqueParameter(Constants.SEARCH_BY_BULSTAT, bulstat);
 					company.setAddress(address);
 					company.setEstablishedDate(establishedDate);
 					if (fileName != null) {
@@ -100,11 +99,10 @@ public class CreateCompany extends HttpServlet {
 			}
 			if (company != null) {
 				companyDao.createOrUpdate(company);
-			} else{
+			} else {
 				userNotification = Constants.UNSUCCESSFUL_OUTCOME;
 			}
-			dbSession.getTransaction().commit();
-			SessionUtil.closeSession(dbSession);
+			SessionUtil.commitTransaction();
 
 			request.getSession().setAttribute("userNotification", userNotification);
 			response.sendRedirect("companies");

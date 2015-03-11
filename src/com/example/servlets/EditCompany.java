@@ -21,17 +21,21 @@ public class EditCompany extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		long id = Long.parseLong(request.getParameter("companyEditId"));
+		try {
+			long id = Long.parseLong(request.getParameter("companyEditId"));
 
-		Session dataBaseSession = SessionUtil.openSession();
-		dataBaseSession.beginTransaction();
-		GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
-		Company comapnySelectedForEdit = companyDao.findByUniqueParameter(Constants.SEARCH_BY_ID, id);
-		dataBaseSession.getTransaction().commit();
-		SessionUtil.closeSession(dataBaseSession);
+			Session dataBaseSession = SessionUtil.getINSTANCE();
+			SessionUtil.beginTransaction();
+			GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
+			Company comapnySelectedForEdit = companyDao.findByUniqueParameter(Constants.SEARCH_BY_ID, id);
+			SessionUtil.commitTransaction();
 
-		request.setAttribute("comapnySelectedForEdit", comapnySelectedForEdit);
-		request.getRequestDispatcher("jsp/createOrUpdateCompany.jsp").forward(request, response);
+			request.setAttribute("comapnySelectedForEdit", comapnySelectedForEdit);
+			request.getRequestDispatcher("jsp/createOrUpdateCompany.jsp").forward(request, response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.sendRedirect("error");
+		}
 	}
 
 }

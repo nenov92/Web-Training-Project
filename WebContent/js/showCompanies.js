@@ -14,9 +14,10 @@ function setY(y) {
 	}
 }
 
-function openPopUp(companyId) {
+function openRemovePopUp(companyId) {
 	$("#myModal").modal('show');
 	setCompanyId(companyId);
+
 	// Another way for popup
 	//if(window.confirm("Are you sure?")){
 	//	setCompanyId(companyId);
@@ -35,9 +36,6 @@ function setCompanyId(companyId) {
 }
 
 $(document).ready(function() {
-	// hide remove popup 
-	$("#myModal").modal('hide');
-
 	// if there is user notification hide it after given time
 	if ($("#userNotification")) {
 		$("#userNotification").fadeOut(2500);

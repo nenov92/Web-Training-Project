@@ -8,7 +8,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.hibernate.Session;
 
@@ -31,35 +30,30 @@ public class ShowCompanies extends HttpServlet {
 	}
 
 	private void loadCompanies(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int x;
-		int y;
-		// TODO use only x, y from session
-		if (request.getParameter("x-axis") != null && request.getParameter("y-axis") != null) {
-			x = Integer.parseInt(request.getParameter("x-axis"));
-			y = Integer.parseInt(request.getParameter("y-axis"));
-		} else if (request.getSession().getAttribute("xValue") != null && request.getSession().getAttribute("yValue") != null) {
-			x = (int) request.getSession().getAttribute("xValue");
-			y = (int) request.getSession().getAttribute("yValue");
-		} else {
-			x = 3;
-			y = 3;
-		}
+		int x = 3;
+		int y = 3;
 
 		try {
-			Session dataBaseSession = SessionUtil.openSession();
-			GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
-			dataBaseSession.beginTransaction();
-			List<Company> companiesFromDb = companyDao.findTop(x * y);
-			dataBaseSession.getTransaction().commit();
-			// TODO do not close session
-			SessionUtil.closeSession(dataBaseSession);
+			if (request.getParameter("x-axis") != null && request.getParameter("y-axis") != null) {
+				x = Integer.parseInt(request.getParameter("x-axis"));
+				y = Integer.parseInt(request.getParameter("y-axis"));
+			} else if (request.getSession().getAttribute("xValue") != null && request.getSession().getAttribute("yValue") != null) {
+				x = (int) request.getSession().getAttribute("xValue");
+				y = (int) request.getSession().getAttribute("yValue");
+			}
 
-			HttpSession httpSession = request.getSession();
-			httpSession.setAttribute("companiesFromDb", companiesFromDb);
-			httpSession.setAttribute("xValue", x);
-			httpSession.setAttribute("yValue", y);
+			Session dataBaseSession = SessionUtil.getINSTANCE();
+			GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
+			SessionUtil.beginTransaction();
+			List<Company> companiesFromDb = companyDao.findTop(x * y);
+			SessionUtil.commitTransaction();
+
+			request.getSession().setAttribute("companiesFromDb", companiesFromDb);
+			request.getSession().setAttribute("xValue", x);
+			request.getSession().setAttribute("yValue", y);
 			request.getRequestDispatcher("jsp/showCompanies.jsp").forward(request, response);
 		} catch (Exception e) {
+			e.printStackTrace();
 			response.sendRedirect("error");
 		}
 	}

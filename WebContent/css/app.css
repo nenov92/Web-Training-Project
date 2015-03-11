@@ -12,8 +12,9 @@
 }
 
 #generalError {
-	margin: 10px auto;
+	margin: 20px auto;
 	width: 500px;
+	color: white;
 }
 
 /* loading indicator while ajax call is executed */
@@ -25,7 +26,9 @@
 	left: 0;
 	height: 100%;
 	width: 100%;
-	background: url("http://localhost:8080/MyWebProjectStaticContent/images/ajax-loader.gif") 50% 50% no-repeat;
+	background:
+		url("http://localhost:8080/MyWebProjectStaticContent/images/ajax-loader.gif")
+		50% 50% no-repeat;
 }
 
 body.loading {

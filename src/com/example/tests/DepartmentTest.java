@@ -51,21 +51,20 @@ public class DepartmentTest {
 
 	@BeforeClass
 	public static void initializeSession() {
-		session = SessionUtil.openSession();
+		session = SessionUtil.getINSTANCE();
 		departmentDao = new GenericDaoImpl<Department>(session, Department.class);
 		companyDao = new GenericDaoImpl<Company>(session, Company.class);
 	}
 
 	@Before
 	public void beginTransaction() {
+		// check if session was closed while testing for exceptions
 		if (!session.isOpen()) {
-			session = SessionUtil.openSession();
+			session = SessionUtil.getINSTANCE();
 			departmentDao.setCurrentSession(session);
 			companyDao.setCurrentSession(session);
 		}
-		if (!session.getTransaction().isActive()) {
-			session.beginTransaction();
-		}
+		SessionUtil.beginTransaction();
 	}
 
 	@Test
@@ -133,8 +132,8 @@ public class DepartmentTest {
 
 		companyDao.createOrUpdate(company);
 
-		session.getTransaction().commit();
-		session.beginTransaction();
+		SessionUtil.commitTransaction();
+		SessionUtil.beginTransaction();
 
 		departmentId1 = department1.getId();
 		long departmentId2 = department2.getId();
@@ -367,8 +366,8 @@ public class DepartmentTest {
 			fail("ConstraintViolationException should have been thrown");
 		} catch (ConstraintViolationException e) {
 			assertEquals("department_name_key", e.getConstraintName());
-			session.getTransaction().rollback();
-			SessionUtil.closeSession(session);
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
 		}
 	}
 
@@ -380,8 +379,8 @@ public class DepartmentTest {
 			fail("PropertyValueException should have been thrown");
 		} catch (PropertyValueException e) {
 			assertEquals("name", e.getPropertyName());
-			session.getTransaction().rollback();
-			SessionUtil.closeSession(session);
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
 		}
 	}
 
@@ -395,8 +394,8 @@ public class DepartmentTest {
 			fail("DataException should have been thrown");
 		} catch (DataException e) {
 			assertTrue(e.getSQLException().getMessage().contains("value too long"));
-			session.getTransaction().rollback();
-			SessionUtil.closeSession(session);
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
 		}
 	}
 
@@ -448,14 +447,12 @@ public class DepartmentTest {
 
 	@After
 	public void commitTransaction() {
-		if (session.isOpen() && session.getTransaction().isActive() && !session.getTransaction().wasRolledBack()) {
-			session.getTransaction().commit();
-		}
+		SessionUtil.commitTransaction();
 	}
 
 	@AfterClass
-	public static void closeRunningSessio() {
-		SessionUtil.closeSession(session);
+	public static void closeRunningSession() {
+		SessionUtil.closeSession();
 	}
 
 }

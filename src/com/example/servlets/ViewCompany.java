@@ -21,17 +21,20 @@ public class ViewCompany extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		long id = Long.parseLong(request.getParameter("viewId"));
+		try {
+			long id = Long.parseLong(request.getParameter("viewId"));
 
-		Session dataBaseSession = SessionUtil.openSession();
-		dataBaseSession.beginTransaction();
-		GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
-		Company comapnySelectedForView = companyDao.findByUniqueParameter(Constants.SEARCH_BY_ID, id);
-		dataBaseSession.getTransaction().commit();
-		SessionUtil.closeSession(dataBaseSession);
+			Session dataBaseSession = SessionUtil.getINSTANCE();
+			SessionUtil.beginTransaction();
+			GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dataBaseSession, Company.class);
+			Company comapnySelectedForView = companyDao.findByUniqueParameter(Constants.SEARCH_BY_ID, id);
+			SessionUtil.commitTransaction();
 
-		request.setAttribute("comapnySelectedForView", comapnySelectedForView);
-		request.getRequestDispatcher("jsp/viewCompany.jsp").forward(request, response);
+			request.setAttribute("comapnySelectedForView", comapnySelectedForView);
+			request.getRequestDispatcher("jsp/viewCompany.jsp").forward(request, response);
+		} catch (Exception e) {
+			response.sendRedirect("error");
+		}
 	}
 
 }

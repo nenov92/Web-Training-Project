@@ -38,29 +38,32 @@ public class CompanyTest {
 	static Company company;
 	static Company company1;
 	static Company company2;
+	static Company companyOne;
+	static Company companyTwo;
 	static Session session;
 
 	// Unique values needed to comply with unique constraints
 	static final String companyName = ApplicationUtil.uuidString();
 	static final String companyName1 = ApplicationUtil.uuidString();
 	static final String companyName2 = ApplicationUtil.uuidString();
+	static final String companyNameOne = ApplicationUtil.uuidString();
+	static final String companyNameTwo = ApplicationUtil.uuidString();
 	static final String companyBulstat = ApplicationUtil.uuidString();
 
 	@BeforeClass
 	public static void initializeSession() {
-		session = SessionUtil.openSession();
+		session = SessionUtil.getINSTANCE();
 		companyDao = new GenericDaoImpl<Company>(session, Company.class);
 	}
 
 	@Before
 	public void beginTransaction() {
+		// check if session was closed while testing for exceptions
 		if (!session.isOpen()) {
-			session = SessionUtil.openSession();
+			session = SessionUtil.getINSTANCE();
 			companyDao.setCurrentSession(session);
 		}
-		if (!session.getTransaction().isActive()) {
-			session.beginTransaction();
-		}
+		SessionUtil.beginTransaction();
 	}
 
 	@Test
@@ -165,10 +168,76 @@ public class CompanyTest {
 		assertFalse("Company boss list does contain employee", suitableEmployees.contains(JSE));
 	}
 
+	@Test
+	public void hCompanyRatingsShouldBeSwapped() {
+		companyOne = new Company(companyNameOne, "University Street", new Date(), ApplicationUtil.uuidString(), "url");
+		companyTwo = new Company(companyNameTwo, "University Street", new Date(), ApplicationUtil.uuidString(), "url");
+		
+		companyDao.createOrUpdate(companyOne);
+		companyDao.createOrUpdate(companyTwo);
+		
+		companyOne = companyDao.findByUniqueParameter(Constants.SEARCH_BY_NAME, companyNameOne);
+		companyTwo = companyDao.findByUniqueParameter(Constants.SEARCH_BY_NAME, companyNameTwo);
+		
+		long ratingOne = companyOne.getRating();
+		long ratingTwo = companyTwo.getRating();
+
+		companyTwo.setRating(-1);
+		companyDao.createOrUpdate(companyTwo);
+		SessionUtil.commitTransaction();
+
+		SessionUtil.beginTransaction();
+		companyOne.setRating(ratingTwo);
+		companyDao.createOrUpdate(companyOne);
+
+		companyTwo.setRating(ratingOne);
+		companyDao.createOrUpdate(companyTwo);
+		SessionUtil.commitTransaction();
+		
+		SessionUtil.beginTransaction();
+		companyOne = companyDao.findByUniqueParameter(Constants.SEARCH_BY_NAME, companyNameOne);
+		companyTwo = companyDao.findByUniqueParameter(Constants.SEARCH_BY_NAME, companyNameTwo);
+		assertEquals(ratingTwo, companyOne.getRating());
+		assertEquals(ratingOne, companyTwo.getRating());
+	}
+	
 	/*
 	 * Following tests should throw exception, because Company object with non-valid parameters or without any is trying to be saved
 	 */
 
+	@Test
+	public void iWhenErrorOccursWhileSwappingRollbackShouldBeExecuted() {
+		Company localCompanyOne = companyDao.findByUniqueParameter(Constants.SEARCH_BY_NAME, companyNameOne);
+		Company localCompanyTwo = companyDao.findByUniqueParameter(Constants.SEARCH_BY_NAME, companyNameTwo);
+
+		long ratingOne = localCompanyOne.getRating();
+		long ratingTwo = localCompanyTwo.getRating();
+
+		try {
+			localCompanyOne.setRating(ratingTwo);
+			localCompanyTwo.setRating(ratingOne);
+			
+			companyDao.createOrUpdate(localCompanyOne);
+			companyDao.createOrUpdate(localCompanyTwo);
+			SessionUtil.commitTransaction();
+			fail("ConstraintViolationException should have been thrown");
+		} catch (ConstraintViolationException e) {
+			assertEquals("company_rating_key", e.getConstraintName());
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
+		}
+		
+		// reinitialize session after it was closed
+		session = SessionUtil.getINSTANCE();
+		companyDao.setCurrentSession(session);
+		
+		localCompanyOne = companyDao.findByUniqueParameter(Constants.SEARCH_BY_NAME, companyNameOne);
+		localCompanyTwo = companyDao.findByUniqueParameter(Constants.SEARCH_BY_NAME, companyNameTwo);
+		
+		assertEquals(ratingOne, localCompanyOne.getRating());
+		assertEquals(ratingTwo, localCompanyTwo.getRating());
+	}
+	
 	@Test
 	public void mMultipleCompaniesWithSameNameShouldNotBeSaved() {
 		Company localCompany = new Company(companyName1, "Bedford Street", new Date(), ApplicationUtil.uuidString(), "url/to/company/new/logo");
@@ -178,8 +247,8 @@ public class CompanyTest {
 			fail("ConstraintViolationException should have been thrown");
 		} catch (ConstraintViolationException e) {
 			assertEquals("company_name_key", e.getConstraintName());
-			session.getTransaction().rollback();
-			SessionUtil.closeSession(session);
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
 		}
 	}
 
@@ -192,8 +261,8 @@ public class CompanyTest {
 			fail("ConstraintViolationException should have been thrown");
 		} catch (ConstraintViolationException e) {
 			assertEquals("company_bulstat_key", e.getConstraintName());
-			session.getTransaction().rollback();
-			SessionUtil.closeSession(session);
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
 		}
 	}
 
@@ -205,8 +274,8 @@ public class CompanyTest {
 			fail("PropertyValueException should have been thrown");
 		} catch (PropertyValueException e) {
 			assertEquals("address", e.getPropertyName());
-			session.getTransaction().rollback();
-			SessionUtil.closeSession(session);
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
 		}
 	}
 
@@ -220,8 +289,8 @@ public class CompanyTest {
 			fail("DataException should have been thrown");
 		} catch (DataException e) {
 			assertTrue(e.getSQLException().getMessage().contains("value too long"));
-			session.getTransaction().rollback();
-			SessionUtil.closeSession(session);
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
 		}
 	}
 
@@ -238,25 +307,27 @@ public class CompanyTest {
 		List<Long> idList = new ArrayList<Long>();
 		idList.add(company1.getId());
 		idList.add(company2.getId());
+		idList.add(companyOne.getId());
+		idList.add(companyTwo.getId());
 
 		companyDao.deleteMultipleRecords("Company", idList);
 		List<Company> companies = companyDao.findMultipleRecordsById(idList);
 
 		assertFalse("Company is not successfully deleted", companies.contains(company1));
 		assertFalse("Company is not successfully deleted", companies.contains(company2));
+		assertFalse("Company is not successfully deleted", companies.contains(companyOne));
+		assertFalse("Company is not successfully deleted", companies.contains(companyTwo));
 		assertTrue("List of companies is not empty", companies.isEmpty());
 	}
 	
 	@After
 	public void commitTransaction() {
-		if (session.isOpen() && session.getTransaction().isActive() && !session.getTransaction().wasRolledBack()) {
-			session.getTransaction().commit();
-		}
+		SessionUtil.commitTransaction();
 	}
 
 	@AfterClass
-	public static void closeRunningSessio() {
-		SessionUtil.closeSession(session);
+	public static void closeRunningSession() {
+		SessionUtil.closeSession();
 	}
 
 }

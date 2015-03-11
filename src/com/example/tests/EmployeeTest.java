@@ -61,7 +61,7 @@ public class EmployeeTest {
 
 	@BeforeClass
 	public static void initializeSession() {
-		session = SessionUtil.openSession();
+		session = SessionUtil.getINSTANCE();
 		employeeDao = new GenericDaoImpl<Employee>(session, Employee.class);
 		companyDao = new GenericDaoImpl<Company>(session, Company.class);
 		departmentDao = new GenericDaoImpl<Department>(session, Department.class);
@@ -69,15 +69,14 @@ public class EmployeeTest {
 
 	@Before
 	public void beginTransaction() {
+		// check if session was closed while testing for exceptions
 		if (!session.isOpen()) {
-			session = SessionUtil.openSession();
+			session = SessionUtil.getINSTANCE();
 			employeeDao.setCurrentSession(session);
 			companyDao.setCurrentSession(session);
 			departmentDao.setCurrentSession(session);
 		}
-		if (!session.getTransaction().isActive()) {
-			session.beginTransaction();
-		}
+		SessionUtil.beginTransaction();
 	}
 
 	@Test
@@ -325,8 +324,8 @@ public class EmployeeTest {
 			fail("ConstraintViolationException should have been thrown");
 		} catch (ConstraintViolationException e) {
 			assertEquals("employee_personal_id_key", e.getConstraintName());
-			session.getTransaction().rollback();
-			SessionUtil.closeSession(session);
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
 		}
 	}
 
@@ -340,8 +339,8 @@ public class EmployeeTest {
 			fail("ConstraintViolationException should have been thrown");
 		} catch (ConstraintViolationException e) {
 			assertEquals("employee_email_key", e.getConstraintName());
-			session.getTransaction().rollback();
-			SessionUtil.closeSession(session);
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
 		}
 	}
 
@@ -354,8 +353,8 @@ public class EmployeeTest {
 			fail("PropertyValueException should have been thrown");
 		} catch (PropertyValueException e) {
 			assertEquals("address", e.getPropertyName());
-			session.getTransaction().rollback();
-			SessionUtil.closeSession(session);
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
 		}
 	}
 
@@ -370,8 +369,8 @@ public class EmployeeTest {
 			fail("DataException should have been thrown");
 		} catch (DataException e) {
 			assertTrue(e.getSQLException().getMessage().contains("value too long"));
-			session.getTransaction().rollback();
-			SessionUtil.closeSession(session);
+			SessionUtil.rollbackTransaction();
+			SessionUtil.closeSession();
 		}
 	}
 
@@ -462,14 +461,12 @@ public class EmployeeTest {
 
 	@After
 	public void commitTransaction() {
-		if (session.isOpen() && session.getTransaction().isActive() && !session.getTransaction().wasRolledBack()) {
-			session.getTransaction().commit();
-		}
+		SessionUtil.commitTransaction();
 	}
 
 	@AfterClass
 	public static void closeSession() {
-		SessionUtil.closeSession(session);
+		SessionUtil.closeSession();
 	}
 
 }

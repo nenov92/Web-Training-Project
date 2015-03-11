@@ -45,17 +45,19 @@ public class ValidateFormData extends HttpServlet {
 	}
 
 	private boolean isPropertyAlreadyTaken(String searchBy, String parameterValue) {
-		Session dbSession = SessionUtil.openSession();
-		GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dbSession, Company.class);
-		dbSession.beginTransaction();
-		// TODO optimize code below & do not close session
-		if (companyDao.findByUniqueParameter(searchBy, parameterValue) == null) {
-			dbSession.getTransaction().commit();
-			SessionUtil.closeSession(dbSession);
-			return false;
-		} else {
-			dbSession.getTransaction().commit();
-			SessionUtil.closeSession(dbSession);
+		try {
+			Session dbSession = SessionUtil.getINSTANCE();
+			GenericDaoImpl<Company> companyDao = new GenericDaoImpl<Company>(dbSession, Company.class);
+			SessionUtil.beginTransaction();
+			Company company = companyDao.findByUniqueParameter(searchBy, parameterValue);
+			SessionUtil.commitTransaction();
+
+			if (company == null) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (Exception e) {
 			return true;
 		}
 	}
