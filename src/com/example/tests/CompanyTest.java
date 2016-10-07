@@ -115,7 +115,7 @@ public class CompanyTest {
 	public void eListShouldBeFoundByMultipleParameters() {
 		HashMap<String, Object> parametersMap = new HashMap<String, Object>();
 		parametersMap.put(Constants.SEARCH_BY_ADDRESS, "Oxford Street");
-		parametersMap.put(Constants.SEARCH_BY_LOGO, "url/to/company/logo");
+		parametersMap.put(Constants.SEARCH_BY_LOGO, new Date());
 
 		List<Company> resultList = companyDao.findBySetOfParameters(parametersMap);
 		assertTrue("Company is not part of the list", resultList.contains(company));

@@ -32,7 +32,7 @@ public class Constants {
 	}
 
 	public static String FILE_PATH(String uniqueObjectIdentifier) {
-		return "C:/DevTools/Apache Tomcat v7.0/wtpwebapps/MyWebProjectStaticContent" + File.separator + FILE_NAME(uniqueObjectIdentifier);
+		return "F:/Dev/Java Workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp1/wtpwebapps/WebApp/css" + File.separator + FILE_NAME(uniqueObjectIdentifier);
 	}
 
 }

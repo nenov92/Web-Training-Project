@@ -108,7 +108,7 @@
 					        		<input type="file" name="companyLogo" id="companyLogo" onchange="validateLogo()" required />
 								</c:when>
 								<c:otherwise>
-						            <img id="image" src="/MyWebProjectStaticContent/<%= comapnySelectedForEdit.getLogo() %>" alt="Company Logo" />
+						            <img id="image" src="css/<%= comapnySelectedForEdit.getLogo() %>" alt="Company Logo" />
 						            <input type="file" name="companyLogo" id="companyLogo" />
 								</c:otherwise>
 					        </c:choose>

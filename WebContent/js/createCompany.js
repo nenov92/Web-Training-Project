@@ -49,9 +49,9 @@ $("#companyName").blur(function() {
 			success: function(response) {
 				if ($("#companyNameInput").has("img").length > 0) {
 					$("#companyNameInput").children("#indicator").remove();
-					$("#companyNameInput").append("<img id=\"indicator\" src=\"/MyWebProjectStaticContent/images/tick.png\" height=\"20\" width=\"20\" alt=\"tick\">");
+					$("#companyNameInput").append("<img id=\"indicator\" src=\"css/images/tick.png\" height=\"20\" width=\"20\" alt=\"tick\">");
 				} else {
-					$("#companyNameInput").append("<img id=\"indicator\" src=\"/MyWebProjectStaticContent/images/tick.png\" height=\"20\" width=\"20\" alt=\"tick\">");
+					$("#companyNameInput").append("<img id=\"indicator\" src=\"css/images/tick.png\" height=\"20\" width=\"20\" alt=\"tick\">");
 				}
 				nameIsValid = true;
 			},
@@ -59,9 +59,9 @@ $("#companyName").blur(function() {
 				if ($("#companyNameInput").has("img").length > 0) {
 					console.log("There is image");
 					$("#companyNameInput").children("#indicator").remove();
-					$("#companyNameInput").append("<img id=\"indicator\" src=\"/MyWebProjectStaticContent/images/cross.png\" height=\"20\" width=\"20\" alt=\"cross\">");
+					$("#companyNameInput").append("<img id=\"indicator\" src=\"css/images/cross.png\" height=\"20\" width=\"20\" alt=\"cross\">");
 				} else {
-					$("#companyNameInput").append("<img id=\"indicator\" src=\"/MyWebProjectStaticContent/images/cross.png\" height=\"20\" width=\"20\" alt=\"cross\">");
+					$("#companyNameInput").append("<img id=\"indicator\" src=\"css/images/cross.png\" height=\"20\" width=\"20\" alt=\"cross\">");
 				}
 				nameIsValid = false;
 			}
@@ -120,18 +120,18 @@ $("#companyBulstat").blur(function() {
 			success: function(response) {
 				if ($("#companyBulstatInput").has("img").length > 0) {
 					$("#companyBulstatInput").children("#indicator").remove();
-					$("#companyBulstatInput").append("<img id=\"indicator\" src=\"/MyWebProjectStaticContent/images/tick.png\" height=\"20\" width=\"20\" alt=\"tick\">");
+					$("#companyBulstatInput").append("<img id=\"indicator\" src=\"css/images/tick.png\" height=\"20\" width=\"20\" alt=\"tick\">");
 				} else {
-					$("#companyBulstatInput").append("<img id=\"indicator\" src=\"/MyWebProjectStaticContent/images/tick.png\" height=\"20\" width=\"20\" alt=\"tick\">");
+					$("#companyBulstatInput").append("<img id=\"indicator\" src=\"css/images/tick.png\" height=\"20\" width=\"20\" alt=\"tick\">");
 				}
 				bulstatIsValid = true;
 			},
 			error: function(response, status, error) {
 				if ($("#companyBulstatInput").has("img").length > 0) {
 					$("#companyBulstatInput").children("#indicator").remove();
-					$("#companyBulstatInput").append("<img id=\"indicator\" src=\"/MyWebProjectStaticContent/images/cross.png\" height=\"20\" width=\"20\" alt=\"cross\">");
+					$("#companyBulstatInput").append("<img id=\"indicator\" src=\"css/images/cross.png\" height=\"20\" width=\"20\" alt=\"cross\">");
 				} else {
-					$("#companyBulstatInput").append("<img id=\"indicator\" src=\"/MyWebProjectStaticContent/images/cross.png\" height=\"20\" width=\"20\" alt=\"cross\">");
+					$("#companyBulstatInput").append("<img id=\"indicator\" src=\"css/images/cross.png\" height=\"20\" width=\"20\" alt=\"cross\">");
 				}
 				bulstatIsValid = false;
 			}

@@ -92,7 +92,7 @@
                    	<div class="cellInner" id="cellInner">
 						<div class="cellContent">
 							<label style="margin-bottom:10px"><%=((Company) companiesFromDb.get(i)).getName()%></label>
-							<img src="/MyWebProjectStaticContent/<%=((Company) companiesFromDb.get(i)).getLogo()%>" alt="Company Logo">
+							<img src="css/<%=((Company) companiesFromDb.get(i)).getLogo()%>" alt="Company Logo">
 							<input type="hidden" id="companyId" name="companyId" value="<%=((Company) companiesFromDb.get(i)).getId()%>" />
 						</div>
 						<div class="cellNavigation">

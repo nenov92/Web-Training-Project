@@ -44,7 +44,7 @@
 			    <div class="table-row">
 			        <div class="col-left">Logo:</div>
 			        <div class="col-right">
-			            <img id="image" src="/MyWebProjectStaticContent/<%= comapnySelectedForView.getLogo() %>" alt="Company Logo">
+			            <img id="image" src="css/<%= comapnySelectedForView.getLogo() %>" alt="Company Logo">
 			        </div>
 	    		</div>
 	    		<div class="table-row">

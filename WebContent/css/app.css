@@ -27,7 +27,7 @@
 	height: 100%;
 	width: 100%;
 	background:
-		url("http://localhost:8080/MyWebProjectStaticContent/images/ajax-loader.gif")
+		url("images/ajax-loader.gif")
 		50% 50% no-repeat;
 }
 
@@ -39,9 +39,15 @@ body.loading .loadingIndicator {
 	display: block;
 }
 
-body {
+/*body {
 	background: #e6e6e6
 		url("http://localhost:8080/MyWebProjectStaticContent/images/bg.png") 0
+		0 repeat;
+}*/
+
+body {
+	background: #e6e6e6
+		url("images/background.jpg") 0
 		0 repeat;
 }
 
